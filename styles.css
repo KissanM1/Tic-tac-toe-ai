@@ -1,0 +1,11 @@
+.col1, .col2, .col3 {
+    border: 2px solid red;
+    height: 100px;
+    width: 100px;
+    margin-top: 2px;
+}
+
+.game-board {
+    display: flex;
+    gap: 2px;
+}

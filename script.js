@@ -11,14 +11,15 @@ function updateState(id, user){
 
 function clicked (id) {
     output = (moveCount % 2 == 0) ? "X" : "O";
-    if (tiles[id].innerText.trim() === "" && (!checkState(state))) {
+    if (tiles[id].innerText.trim() === "" && (checkWinner(state) === "NA")) {
         tiles[id].innerHTML = output;
         moveCount++;
         updateState(id, output)
     }
 }
 
-function checkState(state) {
+function checkWinner(state) {
+    let mappings = {"O" : -1, "X" : 1, "T" : 0}
     for (let i = 0; i < 3; i++) {
         let row = state[i]
         let checkVal = row[0];
@@ -26,7 +27,7 @@ function checkState(state) {
             continue;
         }
         if (row[0] == checkVal && row[1] == checkVal && row[2] == checkVal){
-            return true
+            return mappings[checkVal]
         }
     }
 
@@ -37,23 +38,30 @@ function checkState(state) {
             continue;
         }
         if (col[0] == checkVal && col[1] == checkVal && col[2] == checkVal){
-            return true
+            return mappings[checkVal]
         }
     }
 
 
     let checkVal = state[1][1];
     if (state[0][0] == checkVal && state[1][1] == checkVal && state[2][2] == checkVal && checkVal !== ""){
-        return true;
+        return mappings[checkVal]
     }
     if (state[0][2] == checkVal && state[1][1] == checkVal && state[2][0] == checkVal && checkVal !== ""){
-        return true
+        return mappings[checkVal]
     }
 
-    return false
+    if (moveCount === 9) {
+        return mappings["T"];
+    }
 
-    
+    return "NA";
 }
+
+// function minimax(state, maximizingPlayer) {}
+// function getAvailableMoves(){}
+// function makeMove(){}
+
 
 
 let moveCount = 0;

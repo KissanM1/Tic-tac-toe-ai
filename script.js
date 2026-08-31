@@ -58,8 +58,17 @@ function checkWinner(state) {
     return "NA";
 }
 
+function getAvailableMoves(state){
+    output = []
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+            if (state[i][j] === "")
+                output.push(`(${i},${j})`)
+        }
+    }
+    return output
+}
 // function minimax(state, maximizingPlayer) {}
-// function getAvailableMoves(){}
 // function makeMove(){}
 
 

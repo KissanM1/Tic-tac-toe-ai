@@ -1,61 +1,49 @@
-function updateState(id, user){
-    let row = Math.floor(parseInt(id, 10) / 3);
-    let col = id % 3;
-    state[row][col] = user;
+function updateState(id){
+    globalState[Math.trunc(id / 3)][id % 3] = player(globalState);
     console.clear()
-    console.log(state[0])
-    console.log(state[1])
-    console.log(state[2])
+    console.log(globalState[0])
+    console.log(globalState[1])
+    console.log(globalState[2])
 
 }
 
-function clicked (id) {
-    output = (moveCount % 2 == 0) ? "X" : "O";
-    if (tiles[id].innerText.trim() === "" && (checkWinner(state) === "NA")) {
-        tiles[id].innerHTML = output;
-        moveCount++;
-        updateState(id, output)
+function makePlayerMove (id) {
+    if (globalState[Math.trunc(id / 3)][id % 3] === "" && (isTerminal(globalState) === false)) {
+        tiles[id].innerHTML = player(globalState);
+        updateState(id, player(globalState));
     }
 }
 
-function checkWinner(state) {
-    let mappings = {"O" : -1, "X" : 1, "T" : 0}
-    for (let i = 0; i < 3; i++) {
-        let row = state[i]
-        let checkVal = row[0];
-        if (checkVal === "") {
-            continue;
-        }
-        if (row[0] == checkVal && row[1] == checkVal && row[2] == checkVal){
-            return mappings[checkVal]
+function isTerminal(state) {
+    let broken = false
+    for (const row of state) {
+        for (const cell of row) {
+            if (cell === "") {
+                broken = true
+            }
         }
     }
+    if (!broken || winner(state) !== null){
+        return true
+    }
+    return false
 
-    for (let i = 0; i < 3; i++) {
-        let col = [state[0][i],state[1][i],state[2][i]]
-        let checkVal = col[0];
-        if (checkVal === "") {
-            continue;
+}
+
+function player(state) {
+    let count = 0
+    for (const row of state) {
+        for (cell of row) {
+            if (cell !== "") {
+                count++
+            }
         }
-        if (col[0] == checkVal && col[1] == checkVal && col[2] == checkVal){
-            return mappings[checkVal]
-        }
     }
-
-
-    let checkVal = state[1][1];
-    if (state[0][0] == checkVal && state[1][1] == checkVal && state[2][2] == checkVal && checkVal !== ""){
-        return mappings[checkVal]
+    if (count % 2 === 0) {
+        return "X"
+    } else {
+        return "O"
     }
-    if (state[0][2] == checkVal && state[1][1] == checkVal && state[2][0] == checkVal && checkVal !== ""){
-        return mappings[checkVal]
-    }
-
-    if (moveCount === 9) {
-        return mappings["T"];
-    }
-
-    return "NA";
 }
 
 function getAvailableMoves(state){
@@ -68,19 +56,45 @@ function getAvailableMoves(state){
     }
     return output
 }
-// function minimax(state, maximizingPlayer) {}
-// function makeMove(){}
 
+function winner(state) {
 
+    if (state[0][0] === state[0][1] && state[0][1] === state[0][2] && state[0][0] !== "") {
+        return state[0][0]
+    }
+    if (state[1][0] === state[1][1] && state[1][1] === state[1][2] && state[1][0] !== "") {
+        return state[1][0]
+    }
+    if (state[2][0] === state[2][1] && state[2][1] === state[2][2] && state[2][0] !== "") {
+        return state[2][0]
+    }
 
-let moveCount = 0;
+    if (state[0][0] === state[1][0] && state[1][0] === state[2][0] && state[0][0] !== "") {
+        return state[0][0]
+    }
+    if (state[0][1] === state[1][1] && state[1][1] === state[2][1] && state[0][1] !== "") {
+        return state[0][1]
+    }
+    if (state[0][2] === state[1][2] && state[1][2] === state[2][2] && state[0][2] !== "") {
+        return state[0][2]
+    }
+
+    if (state[0][0] === state[1][1] && state[1][1] === state[2][2] && state[0][0] !== "") {
+        console.log(1);
+        return state[0][0]
+    }
+    if (state[0][2] === state[1][1] && state[1][1] === state[2][0] &&  state[0][2] !== "") {
+        console.log(2);
+        return state[0][2]
+    }
+    return null
+}
+
 const tiles = []
-const state = [["", "", ""],["", "", ""],["", "", ""]]
+const globalState = [["", "", ""],["", "", ""],["", "", ""]]
 
 for (let i = 0; i < 9; i++) {
     let temp = document.getElementById(`${i}`);
-    temp.addEventListener("click", () => clicked(i));
+    temp.addEventListener("click", () => makePlayerMove(i));
     tiles.push(temp);
 }
-
-

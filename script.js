@@ -1,5 +1,5 @@
-function updateState(id){
-    globalState[Math.trunc(id / 3)][id % 3] = player(globalState);
+function updateState(action){
+    globalState[Math.trunc(action / 3)][action % 3] = player(globalState);
     console.clear()
     console.log(globalState[0])
     console.log(globalState[1])
@@ -7,10 +7,10 @@ function updateState(id){
 
 }
 
-function makePlayerMove (id) {
-    if (globalState[Math.trunc(id / 3)][id % 3] === "" && (isTerminal(globalState) === false)) {
-        tiles[id].innerHTML = player(globalState);
-        updateState(id, player(globalState));
+function makePlayerMove (action) {
+    if (globalState[Math.trunc(action / 3)][action % 3] === "" && (isTerminal(globalState) === false)) {
+        tiles[action].innerHTML = player(globalState);
+        updateState(action, player(globalState));
     }
 }
 
@@ -57,8 +57,25 @@ function getAvailableMoves(state){
     return output
 }
 
-function winner(state) {
+function result(action, state) {
+    let output = structuredClone(state);
+    output[Math.trunc(action / 3)][action % 3] = player(output);
+    return output;
+}
 
+function utility(state) {
+    if (winner(state === "X")) {
+        return 1
+    }
+    if (winner(state === "O")) {
+        return -1
+    }
+    return 0
+}
+
+
+function winner(state) {
+    
     if (state[0][0] === state[0][1] && state[0][1] === state[0][2] && state[0][0] !== "") {
         return state[0][0]
     }
@@ -68,7 +85,7 @@ function winner(state) {
     if (state[2][0] === state[2][1] && state[2][1] === state[2][2] && state[2][0] !== "") {
         return state[2][0]
     }
-
+    
     if (state[0][0] === state[1][0] && state[1][0] === state[2][0] && state[0][0] !== "") {
         return state[0][0]
     }
@@ -78,13 +95,11 @@ function winner(state) {
     if (state[0][2] === state[1][2] && state[1][2] === state[2][2] && state[0][2] !== "") {
         return state[0][2]
     }
-
+    
     if (state[0][0] === state[1][1] && state[1][1] === state[2][2] && state[0][0] !== "") {
-        console.log(1);
         return state[0][0]
     }
     if (state[0][2] === state[1][1] && state[1][1] === state[2][0] &&  state[0][2] !== "") {
-        console.log(2);
         return state[0][2]
     }
     return null

@@ -1,10 +1,10 @@
 function updateState(action){
     globalState[Math.trunc(action / 3)][action % 3] = player(globalState);
+    tiles[action].innerHTML = globalState[Math.trunc(action / 3)][action % 3];
     console.clear()
     console.log(globalState[0])
     console.log(globalState[1])
     console.log(globalState[2])
-
 }
 
 function makePlayerMove (action) {
@@ -12,7 +12,9 @@ function makePlayerMove (action) {
         tiles[action].innerHTML = player(globalState);
         updateState(action);
         let temp = minimax(globalState);
-        updateState(temp);
+        if (temp !== null) {
+            updateState(temp);
+        }
     }
 }
 
@@ -53,7 +55,7 @@ function getAvailableMoves(state){
     for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
             if (state[i][j] === "")
-                output.push(`(${i},${j})`)
+                output.push(i*3 + j)
         }
     }
     return output
@@ -66,10 +68,10 @@ function result(action, state) {
 }
 
 function utility(state) {
-    if (winner(state === "X")) {
+    if (winner(state) === "X") {
         return 1
     }
-    if (winner(state === "O")) {
+    if (winner(state) === "O") {
         return -1
     }
     return 0
@@ -88,13 +90,13 @@ function minimax(state) {
 
 function maxValue(state) {
     if (isTerminal(state)) {
-        return [utility, null]
+        return [utility(state), null]
     }
     let v = -Infinity;
     let output = null
     for (const move of getAvailableMoves(state)) {
-        val = minValue(result(move, state))
-        if (v > val) {
+        let val = minValue(result(move, state))[0]
+        if (val > v) {
             v = val
             output = move
         }
@@ -104,13 +106,13 @@ function maxValue(state) {
 
 function minValue(state) {
     if (isTerminal(state)) {
-        return [utility, null]
+        return [utility(state), null]
     }
     let v = Infinity;
     let output = null
     for (const move of getAvailableMoves(state)) {
-        val = minValue(result(move, state))
-        if (v < val) {
+        let val = maxValue(result(move, state))[0]
+        if (val < v) {
             v = val
             output = move
         }

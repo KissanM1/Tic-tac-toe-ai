@@ -10,7 +10,9 @@ function updateState(action){
 function makePlayerMove (action) {
     if (globalState[Math.trunc(action / 3)][action % 3] === "" && (isTerminal(globalState) === false)) {
         tiles[action].innerHTML = player(globalState);
-        updateState(action, player(globalState));
+        updateState(action);
+        let temp = minimax(globalState);
+        updateState(temp);
     }
 }
 
@@ -71,6 +73,49 @@ function utility(state) {
         return -1
     }
     return 0
+}
+
+function minimax(state) {
+    if (isTerminal(state)) {
+        return null
+    }
+    if (player(state) === "X") {
+        return maxValue(state)[1]
+    }
+    return minValue(state)[1]
+}
+
+
+function maxValue(state) {
+    if (isTerminal(state)) {
+        return [utility, null]
+    }
+    let v = -Infinity;
+    let output = null
+    for (const move of getAvailableMoves(state)) {
+        val = minValue(result(move, state))
+        if (v > val) {
+            v = val
+            output = move
+        }
+    }
+    return [v, output]
+}
+
+function minValue(state) {
+    if (isTerminal(state)) {
+        return [utility, null]
+    }
+    let v = Infinity;
+    let output = null
+    for (const move of getAvailableMoves(state)) {
+        val = minValue(result(move, state))
+        if (v < val) {
+            v = val
+            output = move
+        }
+    }
+    return [v, output]
 }
 
 
